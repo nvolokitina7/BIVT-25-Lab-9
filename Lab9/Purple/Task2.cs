@@ -10,13 +10,13 @@ namespace Lab9.Purple
     {
         private string[] _output;
         public string[] Output => _output;
-        public Task2(string text) : base(text)
+        public Task2(string text) : base(text??string.Empty)
         {
-            _output = null;
+            _output = Array.Empty<string>();
         }
         public override void Review()
         {
-            if (Input == null) { _output = null; return; }
+            if (string.IsNullOrEmpty(Input)) { _output = Array.Empty<string>(); return; }
             string[] str = Input.Split(' ');
             string[] words = new string[str.Length];
             int k = 0;
@@ -69,7 +69,7 @@ namespace Lab9.Purple
         }
         public override string ToString()
         {
-            if (Output == null) return "";
+            if (Output == null || Output.Length == 0) return string.Empty;
             return string.Join(Environment.NewLine, Output);
         }
     }
