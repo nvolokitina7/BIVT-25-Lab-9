@@ -1,76 +1,131 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+namespace Lab9.Purple;
 
-namespace Lab9.Purple
+public class Task2 : Purple
 {
-    public class Task2 : Purple
+    private string[] _output;
+    public string[] Output => _output;
+
+    public Task2(string text) : base(text)
     {
-        private string[] _output;
-        public string[] Output => _output;
-        public Task2(string text) : base(text??string.Empty)
+        _output = null;
+    }
+
+    public override void Review()
+    {
+        if (Input == null)
         {
-            _output = Array.Empty<string>();
+            _output = null;
+            return;
         }
-        public override void Review()
+
+        string[] raw = Input.Split(' ');
+
+        string[] words = new string[raw.Length];
+        int wordCount = 0;
+        for (int i = 0; i < raw.Length; i++) 
         {
-            if (string.IsNullOrEmpty(Input)) { _output = Array.Empty<string>(); return; }
-            string[] str = Input.Split(' ');
-            string[] words = new string[str.Length];
-            int k = 0;
-            for (int i = 0; i < str.Length; i++)
-                if (str[i]!="")
-                    words[k++] = str[i];
-            string[] strings= new string[words.Length]; int stc = 0;
-            string[] a= new string[words.Length]; int c = 0;int l = 0;
-            //strings - готовые строки(результат), stc - сколько сформировано strings,
-            //a - текущая строка, c - сколько слов в a, l -  сколько букв в a (без пробелов).
-            for (int i = 0; i < k; i++)
+            if (raw[i] != "")
             {
-                string word = words[i];
-                if (c == 0)
-                { a[c++] = word; l += word.Length; }
+                words[wordCount] = raw[i];
+                wordCount++;
+            }
+        }
+
+        string[] lines = new string[words.Length];
+        int lineCount = 0;
+        string[] current = new string[words.Length];
+        int count = 0; 
+        int letters = 0; 
+
+        for (int i = 0; i < wordCount; i++)
+        {
+            string word = words[i];
+
+            if (count == 0) 
+            {
+                current[count] = word;
+                count++;
+                letters = word.Length;
+            }
+            else
+            {
+                int length = letters + word.Length + count; 
+
+                if (length <= 50)
+                {
+                    current[count] = word;
+                    count++;
+                    letters += word.Length;
+                }
                 else
                 {
-                    int len = l + word.Length + c; // сколько станет букв + пробелы
-                    if (len <= 50)
-                    { a[c++] = word; l += word.Length; }
-                    else
-                    {   strings[stc++] = L(a, c, l);
-                        a=new string[words.Length];
-                        a[0] = word; c = 1; l = word.Length;
-                    }
+                    lines[lineCount] = MakeLine(current, count, letters);
+                    lineCount++;
+
+                    current = new string[words.Length];
+                    current[0] = word; 
+                    count = 1;
+                    letters = word.Length;
                 }
             }
-            if (c>0) strings[stc++] = L(a, c, l); //если осталась незавершенная строка
-            _output = new string[stc];
-            for (int i=0;i<stc;i++) _output[i] = strings[i]; // итоговый массив
         }
-        private string L(string[] a, int c, int l)
+
+        if (count > 0) 
         {
-            if (c == 1) return a[0]; // возвращаем без пробелов
-            StringBuilder res = new StringBuilder();
-            int b = (50 - l) / (c - 1); // минимум пробелов в 1 промежутке
-            int q = (50 - l) % (c - 1); // количествло пробелов с b++
-            for (int i = 0; i < c; i++)
+            lines[lineCount] = MakeLine(current, count, letters);
+            lineCount++;
+        }
+
+        _output = new string[lineCount]; 
+        for (int i = 0; i < lineCount; i++)
+        {
+            _output[i] = lines[i];
+        }
+    }
+
+    private string MakeLine(string[] words, int count, int letters)
+    {
+        if (count == 1) 
+        {
+            return words[0];
+        }
+
+        int gaps = count - 1; 
+        int spaces = 50 - letters; 
+
+        int baseSpaces = spaces / gaps; 
+        int extra = spaces % gaps; 
+
+        string result = "";
+
+        for (int i = 0; i < count; i++)
+        {
+            result += words[i];
+
+            if (i < gaps)
             {
-                res.Append(a[i]);
-                if (i < c - 1)
-                { 
-                    int b1 = b;
-                    if (q > 0)
-                    { b1++; q--; }
-                    res.Append(' ', b1);
+                int s = baseSpaces;
+
+                if (extra > 0) 
+                {
+                    s++;
+                    extra--;
+                }
+
+                for (int j = 0; j < s; j++) 
+                {
+                    result += " ";
                 }
             }
-            return res.ToString();
         }
-        public override string ToString()
-        {
-            if (Output == null || Output.Length == 0) return string.Empty;
-            return string.Join(Environment.NewLine, Output);
-        }
+        return result;
+    }
+
+    public override string ToString()
+    {
+        if (Output == null)
+            return "";
+
+        return string.Join(Environment.NewLine, Output);
     }
 }
