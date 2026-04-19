@@ -1,96 +1,61 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Lab9.Purple
 {
     public class Task1 : Purple
     {
         private string _output;
-        public string Output => _output;
-
+        public string Output=>_output;
         public Task1(string text) : base(text)
         { 
             _output = string.Empty;
         }
-    
         public override void Review()
         {
             if (Input == null)
-            {
-                _output = null;
-                return;
-            }
-
-            StringBuilder result = new StringBuilder();
+            { _output = null; return; }
+            StringBuilder s = new StringBuilder();
             StringBuilder word = new StringBuilder();
-
             for (int i = 0; i < Input.Length; i++)
             {
                 char c = Input[i];
-
-                if (char.IsLetterOrDigit(c) || c == '-' || c == '\'')
-                {
+                if (c == '-' || c == '\'' || char.IsLetterOrDigit(c))
                     word.Append(c);
-                }
                 else
                 {
                     if (word.Length > 0)
                     {
-                        bool hasDigit = false;
+                        bool digit = false;
                         for (int j = 0; j < word.Length; j++)
-                        {
-                            if (char.IsDigit(word[j]))
-                            {
-                                hasDigit = true;
-                                break;
-                            }
-                        }
-                        if (hasDigit)
-                        {
-                            result.Append(word);
-                        }
+                            if (char.IsDigit(word[j])) { digit = true; break; }
+                        if (digit) s.Append(word);
                         else
-                        {
-                            for (int l = word.Length - 1; l >= 0; l--) 
-                            {
-                                 result.Append(word[l]); 
-                            }
-                        }
-                        word.Clear(); 
+                            for (int j = word.Length - 1; j >= 0; j--)
+                                s.Append(word[j]);
+                        word.Clear();
                     }
-                    result.Append(c);
+                    s.Append(c);
                 }
             }
-
-            if (word.Length > 0)
-            {
-                bool hasDigit = false;
-                for (int j = 0; j < word.Length; j++)
+                if (word.Length > 0)
                 {
-                    if (char.IsDigit(word[j]))
-                    {
-                        hasDigit = true;
-                        break;
-                    }
+                    bool digit = false;
+                    for (int j = 0; j < word.Length; j++)
+                        if (char.IsDigit(word[j])) { digit = true; break; }
+                    if (digit) s.Append(word);
+                    else
+                        for (int j = word.Length - 1; j >= 0; j--)
+                            s.Append(word[j]);
                 }
-                if (hasDigit)
-                {
-                    result.Append(word);
-                }
-                else
-                {
-                    for (int l = word.Length - 1; l >= 0; l--) 
-                    {
-                        result.Append(word[l]); 
-                    }
-                }
-            }
-
-            _output = result.ToString();
+                _output = s.ToString();
         }
-
         public override string ToString()
         {
-            return Output ?? string.Empty;
+            return Output ?? string.Empty; // если Output=null, вернем "".
         }
     }
 }
