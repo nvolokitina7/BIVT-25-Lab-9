@@ -10,14 +10,14 @@ namespace Lab9.Purple
     {
         private string _output;
         public string Output=>_output;
-        public Task1(string text) : base(text)
+        public Task1(string text) : base(text??string.Empty)
         { 
             _output = string.Empty;
         }
         public override void Review()
         {
-            if (_input == null)
-            { _output = null; return; }
+            if (string.IsNullOrEmpty(_input))
+            { _output = string.Empty; return; }
             StringBuilder s = new StringBuilder();
             StringBuilder word = new StringBuilder();
             for (int i = 0; i < Input.Length; i++)
